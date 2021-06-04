@@ -54,4 +54,43 @@ def annotation_deviations(lsk, parameters=None):
                 this_acts.add(dev[1][0])
         for act in this_acts:
             deviations[act] += 1
-    return dict(deviations)
+    ret = dict(deviations)
+
+    json.dumps(ret)
+
+    return ret
+
+
+def all_activity_deviations(log, lsk, parameters=None):
+    if parameters is None:
+        parameters = {}
+
+    activity_deviations = {}
+    lsk = [x for x in lsk if x]
+    for trace in lsk:
+        for dev in trace:
+            act1 = None
+            act2 = None
+            if dev[0] == "always_before" or dev[0] == "always_after":
+                act1 = dev[1][0]
+            elif dev[0] == "never_together":
+                act1 = dev[1][0]
+                act2 = dev[1][0]
+            elif dev[0] == "directly_follows":
+                act1 = dev[1][0]
+            elif dev[0] == "activ_freq":
+                act1 = dev[1][0]
+
+            if act1 is not None:
+                if act1 not in activity_deviations:
+                    activity_deviations[act1] = list()
+                activity_deviations[act1].append(dev)
+
+            if act2 is not None:
+                if act2 not in activity_deviations:
+                    activity_deviations[act2] = list()
+                activity_deviations[act2].append(dev)
+
+    json.dumps(activity_deviations)
+
+    return activity_deviations

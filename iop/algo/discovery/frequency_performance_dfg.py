@@ -6,6 +6,7 @@ from pm4py.statistics.attributes.log import get as attributes_get
 from pm4py.statistics.end_activities.log import get as ea_get
 from pm4py.statistics.start_activities.log import get as sa_get
 from pm4py.util import xes_constants, exec_utils
+import json
 
 
 class Parameters(Enum):
@@ -32,6 +33,16 @@ def apply(log, parameters=None):
     frequency_dfg, sa, ea, af = dfg_filtering.filter_dfg_on_paths_percentage(frequency_dfg, sa, ea, af,
                                                                              paths_percentage)
 
-    performance_dfg = {x: y for x, y in performance_dfg.items() if x in frequency_dfg}
+    frequency_dfg = {x: int(y) for x, y in frequency_dfg.items()}
+    performance_dfg = {x: float(y) for x, y in performance_dfg.items() if x in frequency_dfg}
+
+    frequency_dfg = [(x, y) for x, y in frequency_dfg.items()]
+    performance_dfg = [(x, y) for x, y in performance_dfg.items()]
+
+    json.dumps(frequency_dfg)
+    json.dumps(performance_dfg)
+    json.dumps(sa)
+    json.dumps(ea)
+    json.dumps(af)
 
     return frequency_dfg, performance_dfg, sa, ea, af
