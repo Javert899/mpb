@@ -11,7 +11,7 @@ def apply(log, parameters=None):
     return temporal_profile_conformance.apply(log, ts, parameters=parameters)
 
 
-def activity_deviations(tsc, parameters=None):
+def annotation_deviations(tsc, parameters=None):
     if parameters is None:
         parameters = {}
 
