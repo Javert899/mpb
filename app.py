@@ -29,13 +29,14 @@ def index():
 
 @app.route("/uploadService", methods=["POST"])
 def upload():
+    this_uuid = "";
     for file in request.files:
         tmp_file = NamedTemporaryFile()
         tmp_file.close()
         fo = request.files[file]
         fo.save(tmp_file.name)
         this_uuid = __load_log(file, tmp_file.name)
-        return __get_process(this_uuid)
+    return {"uuid": this_uuid}
 
 
 @app.route("/processService")
