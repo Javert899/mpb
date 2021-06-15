@@ -29,11 +29,19 @@ class Model(object):
 
     def get_activity_lsk_conf(self):
         dev = log_skeleton.all_activity_deviations(self.log, self.lsk_conf, parameters=self.parameters)
-        return json.dumps(dev)
+        return dev
 
     def get_activity_ts_conf(self):
         dev = temporal_profile.all_activity_deviations(self.log, self.ts_conf, parameters=self.parameters)
         return json.dumps(dev)
+
+    def get_model(self):
+        ret = {"case_ids": self.case_ids, "activity_frequency_cases": self.activity_frequency_cases,
+               "sojourn_time": self.sojourn_time, "frequency_dfg": self.frequency_dfg, "performance_dfg": self.performance_dfg,
+               "start_activities": self.sa, "end_activities": self.ea, "activities_frequency": self.af,
+               "lsk_annotations": log_skeleton.annotation_deviations(self.lsk_conf, parameters=self.parameters),
+               "ts_annotations": temporal_profile.annotation_deviations(self.ts_conf, parameters=self.parameters)}
+        return json.dumps(ret)
 
 
 def apply(log, parameters):
