@@ -10,7 +10,5 @@ parameters = {
     "paths_percentage": 0.2,
     "noise_threshold": 0.02,
     "zeta": 2,
-    "business_hours": False,
-    "weekends": [6, 7],
-    "worktiming": [7, 17]
+    "business_hours": False
 }
