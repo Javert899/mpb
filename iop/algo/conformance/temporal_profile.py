@@ -18,7 +18,7 @@ def apply(log, parameters=None):
 
     json.dumps(conf)
 
-    return conf
+    return ts, conf
 
 
 def annotation_deviations(tsc, parameters=None):

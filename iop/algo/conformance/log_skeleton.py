@@ -31,7 +31,7 @@ def apply(log, parameters=None):
 
     json.dumps(new_deviations)
 
-    return new_deviations
+    return log_skeleton, new_deviations
 
 
 def annotation_deviations(lsk, parameters=None):
