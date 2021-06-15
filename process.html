@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <script type="text/javascript" src="hostname.js"></script>
+        <script type="text/javascript" src="viz.js"></script>
+    </head>
+    <body>
+        <div style="height: 15%; background-color: red">
+            <button id="conformance_view_button" style="display: " onclick="javascript:switchToConformanceView()">Switch to Conformance View</button>
+            <button id="process_view_button" style="display: none" onclick="javascript:switchToProcessView()">Switch to Process View</button>
+        </div>
+        <div style="height: 85%; background-color: white">
+            <div id="process_view" style="display: ">
+                <div id="svg_view">
+
+                </div>
+            </div>
+            <div id="conformance_view" style="display: none">Conformance View</div>
+        </div>
+        <script type="text/javascript">
+            function switchToConformanceView() {
+                document.getElementById("process_view").style.display = "none";
+                document.getElementById("conformance_view").style.display = "";
+                document.getElementById("conformance_view_button").style.display = "none";
+                document.getElementById("process_view_button").style.display = "";
+            }
+
+            function switchToProcessView() {
+                document.getElementById("process_view").style.display = "";
+                document.getElementById("conformance_view").style.display = "none";
+                document.getElementById("conformance_view_button").style.display = "";
+                document.getElementById("process_view_button").style.display = "none";
+            }
+
+            let digraph = 'digraph { a -> b; }';
+
+            let svgXml = Viz(digraph, { format: "svg"});
+            document.getElementById("svg_view").innerHTML = svgXml;
+
+            console.log(getHostname());
+        </script>
+    </body>
+</html>
