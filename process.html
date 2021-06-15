@@ -1,16 +1,32 @@
 <html>
     <head>
+        <script type="text/javascript" src="humanize-duration.js"></script>
         <script type="text/javascript" src="hostname.js"></script>
         <script type="text/javascript" src="viz.js"></script>
         <script type="text/javascript" src="jquery.min.js"></script>
         <script type="text/javascript" src="process_repr.js"></script>
     </head>
     <body>
-        <div style="height: 15%; background-color: red">
-            <button id="conformance_view_button" style="display: " onclick="javascript:switchToConformanceView()">Switch to Conformance View</button>
-            <button id="process_view_button" style="display: none" onclick="javascript:switchToProcessView()">Switch to Process View</button>
+        <div style="height: 12%; background-color: white">
+            <table style="border: 0">
+                <tr>
+                    <td style="width: 20%">
+                        <img src="pads_rwth.png" style="width: 100%" />
+                    </td>
+                    <td style="width: 80%">
+                        <button id="conformance_view_button" style="display: " onclick="javascript:switchToConformanceView()">Swith to Conformance View</button>
+                        <button id="process_view_button" style="display: none" onclick="javascript:switchToProcessView()">Switch to Process View</button>
+                        <button id="apply_changes" style="display: " onclick="javascript:applyChanges()">Apply Changes</button><br />
+                        % act.: <input id="af_slider" type="range" min="0" max="100" value="20" class="slider">
+                        % paths: <input id="pf_slider" type="range" min="0" max="100" value="20" class="slider"><br />
+                        Zeta (TempCC): <input id="zeta_slider" type="range" min="0" max="10" value="2" class="slider">
+                        Noise (Lsk CFCC): <input id="lsk_slider" type="range" min="0" max="30" value="2" class="slider">
+                        BH: <input type="checkbox" id="bh_enabled" />
+                    </td>
+                </tr>
+            </table>
         </div>
-        <div style="height: 85%; background-color: white">
+        <div style="height: 88%; background-color: white">
             <div id="process_view" style="display: ">
                 <div id="svg_view">
 
@@ -19,6 +35,10 @@
             <div id="conformance_view" style="display: none">Conformance View</div>
         </div>
         <script type="text/javascript">
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            var uuid = urlParams.get('uuid');
+
             function switchToConformanceView() {
                 document.getElementById("process_view").style.display = "none";
                 document.getElementById("conformance_view").style.display = "";
@@ -34,9 +54,6 @@
             }
 
             function getProcess() {
-                const queryString = window.location.search;
-                const urlParams = new URLSearchParams(queryString);
-                let uuid = urlParams.get('uuid');
                 let hostnamePort = getHostname();
                 let hostname = hostnamePort["hostname"];
                 let port = hostnamePort["port"];
@@ -46,7 +63,17 @@
                     document.getElementById("svg_view").innerHTML = svgXml;
                 });
             }
-            
+
+            function applyChanges() {
+                let af = document.getElementById("af_slider").value / 100.0;
+                let pf = document.getElementById("pf_slider").value / 100.0;
+                let zeta = document.getElementById("zeta_slider").value / 100.0;
+                let noise_threshold = document.getElementById("lsk_slider").value / 100.0;
+                let business_hours = document.getElementById("bh_enabled").checked;
+                let dictio = {};
+
+            }
+
             getProcess();
             console.log(getHostname());
         </script>
