@@ -19,12 +19,24 @@ logs_dictio = {}
 
 @app.route('/')
 def empty_path():
-    return redirect(url_for('upload'))
+    return redirect(url_for('upload_page'))
 
 
 @app.route('/index.html')
 def index():
-    return redirect(url_for('upload'))
+    return redirect(url_for('upload_page'))
+
+
+@app.route('/upload.html')
+def upload_page():
+    response = make_response(render_template('upload.html'))
+    return response
+
+
+@app.route('/process.html')
+def process_page():
+    response = make_response(render_template('process.html'))
+    return response
 
 
 @app.route("/uploadService", methods=["POST"])

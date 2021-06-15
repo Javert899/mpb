@@ -40,7 +40,7 @@ function reprModel(model) {
         if (max_soj_time > min_soj_time) {
             let perc = (Math.log(1 + soj) - min_soj_time)/(max_soj_time-min_soj_time);
             let rgb_array = rgbColor(perc);
-            let hex_color_soj_time = hexFromRGB(rgb_array[0], rgb_array[1], rgb_array[2]);
+            hex_color_soj_time = hexFromRGB(rgb_array[0], rgb_array[1], rgb_array[2]);
         }
         label += "\nsoj="+humanizeDuration(Math.round(soj*1000000));
         let actFreqCases = model["activity_frequency_cases"][act];
