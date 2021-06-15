@@ -6,6 +6,8 @@ from iop.objects.log import df_loader, log_loader
 from copy import copy
 from iop.objects.model import model as model_factory
 from flask_cors import CORS
+import json
+import traceback
 
 
 app = Flask(__name__)
@@ -38,8 +40,17 @@ def upload():
 
 @app.route("/processService")
 def process():
+    uuid = request.args.get("uuid")
+    parameters_url = request.args.get("parameters")
+    print(parameters_url)
+    try:
+        parameters = base64.b64decode(parameters_url)
+        extra_parameters = json.loads(parameters)
+    except:
+        traceback.print_exc()
+        extra_parameters = {}
     uuid_example_log = __load_log("inputs/interval_event_log.xes", "inputs/interval_event_log.xes")
-    return __get_process(uuid_example_log)
+    return __get_process(uuid_example_log, extra_parameters)
 
 
 def __load_log(orig_name, path):

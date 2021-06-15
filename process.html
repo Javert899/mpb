@@ -19,7 +19,7 @@
                         <button id="apply_changes" style="display: " onclick="javascript:applyChanges()">Apply Changes</button><br />
                         % act.: <input id="af_slider" type="range" min="0" max="100" value="20" class="slider">
                         % paths: <input id="pf_slider" type="range" min="0" max="100" value="20" class="slider"><br />
-                        Zeta (TempCC): <input id="zeta_slider" type="range" min="0" max="10" value="2" class="slider">
+                        Zeta (TempCC): <input id="zeta_slider" type="range" min="1" max="10" value="2" class="slider">
                         Noise (Lsk CFCC): <input id="lsk_slider" type="range" min="0" max="30" value="2" class="slider">
                         BH: <input type="checkbox" id="bh_enabled" />
                     </td>
@@ -60,9 +60,28 @@
             </div>
         </div>
         <script type="text/javascript">
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
-            var uuid = urlParams.get('uuid');
+        var parseQueryString = function() {
+
+            var str = window.location.search;
+            var objURL = {};
+
+            str.replace(
+                new RegExp( "([^?=&]+)(=([^&]*))?", "g" ),
+                function( $0, $1, $2, $3 ){
+                    objURL[ $1 ] = $3;
+                }
+            );
+            return objURL;
+        };
+
+            const urlParams = parseQueryString();
+            var uuid = urlParams['uuid'];
+            var encodedParameters = urlParams['parameters'];
+            let decodedParameters = null;
+            if (encodedParameters != null && typeof(encodedParameters) != "undefined") {
+                decodedParameters = JSON.parse(atob(encodedParameters));
+                setDecodedParameters();
+            }
             var returnedData = null;
 
             function switchToConformanceView() {
@@ -84,9 +103,12 @@
                 let hostname = hostnamePort["hostname"];
                 let port = hostnamePort["port"];
                 let url = "http://"+hostname+":"+port+"/processService";
+                url += "?uuid="+uuid;
+                if (encodedParameters != null && typeof(encodedParameters) != "undefined") {
+                    url += "&parameters="+encodedParameters;
+                }
                 $.get(url, function(data) {
                     returnedData = data;
-                    console.log(returnedData);
                     fillDeviations();
                     representProcessModel();
                 });
@@ -100,10 +122,30 @@
             function applyChanges() {
                 let af = document.getElementById("af_slider").value / 100.0;
                 let pf = document.getElementById("pf_slider").value / 100.0;
-                let zeta = document.getElementById("zeta_slider").value / 100.0;
+                let zeta = document.getElementById("zeta_slider").value * 1.0;
                 let noise_threshold = document.getElementById("lsk_slider").value / 100.0;
                 let business_hours = document.getElementById("bh_enabled").checked;
                 let dictio = {};
+                dictio["activity_percentage"] = af;
+                dictio["paths_percentage"] = pf;
+                dictio["zeta"] = zeta;
+                dictio["noise_threshold"] = noise_threshold;
+                dictio["business_hours"] = business_hours;
+                dictio = JSON.stringify(dictio);
+                encodedParameters = btoa(dictio);
+                loadPage();
+            }
+
+            function setDecodedParameters() {
+                document.getElementById("af_slider").value = 100.0 * decodedParameters["activity_percentage"];
+                document.getElementById("pf_slider").value = 100.0 * decodedParameters["paths_percentage"];
+                document.getElementById("zeta_slider").value = decodedParameters["zeta"];
+                document.getElementById("lsk_slider").value = 100.0 * decodedParameters["noise_threshold"];
+                document.getElementById("bh_enabled").checked = decodedParameters["business_hours"];
+            }
+
+            function loadPage() {
+                window.location.href = "process.html?uuid="+this.uuid+"&parameters="+this.encodedParameters;
             }
 
             function hideEverything() {
@@ -183,7 +225,6 @@
             }
 
             getProcess();
-            console.log(getHostname());
         </script>
     </body>
 </html>
