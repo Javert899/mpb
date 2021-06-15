@@ -11,8 +11,9 @@
         <input id="uploadbutton" type="button" value="Upload" onclick="javascript:postEventLog()"/>
         <script type="text/javascript">
             function postEventLog() {
-                var filename = $("#file").val();
-                console.log(filename);
+                var formData = new FormData();
+                formData.append('file', $('#file')[0].files[0]);
+
                 var hostnamePort = getHostname();
                 console.log(hostnamePort);
                 var hostname = hostnamePort["hostname"];
@@ -23,12 +24,11 @@
                $.ajax({
                 type: "POST",
                 url: url,
-                enctype: 'multipart/form-data',
-                data: {
-                    file: filename
-                },
+                data: formData,
+               processData: false,  // tell jQuery not to process the data
+               contentType: false,  // tell jQuery not to set contentType
                 success: function (data) {
-                    console.log(data);
+                    window.location.href = "process.html?uuid="+data["uuid"];
                 }
             });
             }

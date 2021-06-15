@@ -36,10 +36,13 @@ function reprModel(model) {
         codeToAct[act] = index;
         let label = act+" ("+model["activities_frequency"][act]+")";
         let soj = model["sojourn_time"][act];
-        let perc = (Math.log(1 + soj) - min_soj_time)/(max_soj_time-min_soj_time);
-        let rgb_array = rgbColor(perc);
-        let hex_color_soj_time = hexFromRGB(rgb_array[0], rgb_array[1], rgb_array[2]);
-        label += "\nsoj="+humanizeDuration(Math.round(soj*1000));
+        let hex_color_soj_time = "#ffffff";
+        if (max_soj_time > min_soj_time) {
+            let perc = (Math.log(1 + soj) - min_soj_time)/(max_soj_time-min_soj_time);
+            let rgb_array = rgbColor(perc);
+            let hex_color_soj_time = hexFromRGB(rgb_array[0], rgb_array[1], rgb_array[2]);
+        }
+        label += "\nsoj="+humanizeDuration(Math.round(soj*1000000));
         let actFreqCases = model["activity_frequency_cases"][act];
         let lskAnnotation = 0;
         if (act in model["lsk_annotations"]) {
@@ -59,7 +62,7 @@ function reprModel(model) {
         let act2 = it[0][1];
         let perf = it[1];
         let penwidth = 0.5 + Math.log10(1 + perf);
-        repr += codeToAct[act1] + "->" + codeToAct[act2]+" [label=\""+humanizeDuration(Math.round(perf*1000))+"\"; penwidth=\""+penwidth+"\",fontsize=\"9pt\"];\n";
+        repr += codeToAct[act1] + "->" + codeToAct[act2]+" [label=\""+humanizeDuration(Math.round(perf*1000000))+"\"; penwidth=\""+penwidth+"\",fontsize=\"9pt\"];\n";
     }
     for (let sa in model["start_activities"]) {
         let count = model["start_activities"][sa];

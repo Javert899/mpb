@@ -29,7 +29,7 @@ def index():
 
 @app.route("/uploadService", methods=["POST"])
 def upload():
-    this_uuid = "";
+    this_uuid = ""
     for file in request.files:
         tmp_file = NamedTemporaryFile()
         tmp_file.close()
@@ -43,15 +43,14 @@ def upload():
 def process():
     uuid = request.args.get("uuid")
     parameters_url = request.args.get("parameters")
-    print(parameters_url)
     try:
         parameters = base64.b64decode(parameters_url)
         extra_parameters = json.loads(parameters)
     except:
         traceback.print_exc()
         extra_parameters = {}
-    uuid_example_log = __load_log("inputs/interval_event_log.xes", "inputs/interval_event_log.xes")
-    return __get_process(uuid_example_log, extra_parameters)
+    #uuid_example_log = __load_log("inputs/interval_event_log.xes", "inputs/interval_event_log.xes")
+    return __get_process(uuid, extra_parameters)
 
 
 def __load_log(orig_name, path):
