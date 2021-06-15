@@ -8,7 +8,6 @@ from pm4py.objects.log.util import interval_lifecycle
 
 def apply(log_path):
     parameters = copy(default_parameters)
-    parameters[constants.PARAMETER_CONSTANT_CASEID_KEY] = xes_constants.DEFAULT_TRACEID_KEY
     log = pm4py.read_xes(log_path)
     try:
         transitions = attributes_get.get_attribute_values(log, constants.PARAMETER_CONSTANT_TRANSITION_KEY)

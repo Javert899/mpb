@@ -11,7 +11,6 @@ def apply(log_path):
     df = pd.read_csv(log_path)
     df = pm4py.format_dataframe(df)
     df = dataframe_utils.convert_timestamp_columns_in_df(df)
-    parameters[constants.PARAMETER_CONSTANT_CASEID_KEY] = constants.CASE_CONCEPT_NAME
     if xes_constants.DEFAULT_START_TIMESTAMP_KEY in df.columns:
         parameters[constants.PARAMETER_CONSTANT_START_TIMESTAMP_KEY] = xes_constants.DEFAULT_START_TIMESTAMP_KEY
     else:
