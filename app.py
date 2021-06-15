@@ -67,10 +67,10 @@ def process():
 
 def __load_log(orig_name, path):
     this_uuid = str(uuid.uuid4())
-    if orig_name.endswith(".csv"):
-        log, parameters = df_loader.apply(path)
-    else:
+    try:
         log, parameters = log_loader.apply(path)
+    except:
+        log, parameters = df_loader.apply(path)
     logs_dictio[this_uuid] = (log, parameters)
     return this_uuid
 
