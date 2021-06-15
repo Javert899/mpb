@@ -161,7 +161,7 @@
                         span2.style.display = "none";
                         document.getElementById(target_div).appendChild(span1);
                         document.getElementById(target_div).appendChild(span2);
-                        span1.innerHTML = "<a href=\"javascript:changeVisibility('"+target_div+"_S2_"+count+"')\">"+key+"</a>";
+                        span1.innerHTML = "<a href=\"javascript:changeVisibility('"+target_div+"_S2_"+count+"')\">"+key+" (n.dev: "+value.length+")</a>";
                         for (let subdev_idx in value) {
                             let subdev = value[subdev_idx];
                             let list_item = document.createElement("li");
