@@ -2,6 +2,8 @@
     <head>
         <script type="text/javascript" src="hostname.js"></script>
         <script type="text/javascript" src="viz.js"></script>
+        <script type="text/javascript" src="jquery.min.js"></script>
+        <script type="text/javascript" src="process_repr.js"></script>
     </head>
     <body>
         <div style="height: 15%; background-color: red">
@@ -31,11 +33,21 @@
                 document.getElementById("process_view_button").style.display = "none";
             }
 
-            let digraph = 'digraph { a -> b; }';
-
-            let svgXml = Viz(digraph, { format: "svg"});
-            document.getElementById("svg_view").innerHTML = svgXml;
-
+            function getProcess() {
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                let uuid = urlParams.get('uuid');
+                let hostnamePort = getHostname();
+                let hostname = hostnamePort["hostname"];
+                let port = hostnamePort["port"];
+                let url = "http://"+hostname+":"+port+"/processService";
+                $.get(url, function(data) {
+                    let svgXml = Viz(reprModel(data["model"]), { format: "svg"});
+                    document.getElementById("svg_view").innerHTML = svgXml;
+                });
+            }
+            
+            getProcess();
             console.log(getHostname());
         </script>
     </body>

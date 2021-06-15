@@ -5,9 +5,13 @@ import uuid
 from iop.objects.log import df_loader, log_loader
 from copy import copy
 from iop.objects.model import model as model_factory
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+CORS(app, expose_headers=["x-suggested-filename"])
+
+
 logs_dictio = {}
 
 
