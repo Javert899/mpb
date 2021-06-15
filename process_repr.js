@@ -39,7 +39,5 @@ function reprModel(model) {
         repr += codeToAct[ea]+"->eanode [label=\"\"];\n";
     }
     repr = repr + "}\n";
-    console.log(model);
-    console.log(repr);
     return repr;
 }

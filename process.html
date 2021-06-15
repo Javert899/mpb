@@ -32,12 +32,38 @@
 
                 </div>
             </div>
-            <div id="conformance_view" style="display: none">Conformance View</div>
+            <div id="conformance_view" style="display: none">
+                <button id="view_lsk_activities" onclick="javascript:viewLskActivities()">Activities LSK</button>
+                <button id="view_lsk_cases" onclick="javascript:viewLskCases()">Cases LSK</button>
+                <button id="view_tp_activities" onclick="javascript:viewTpActivities()">Activities TP</button>
+                <button id="view_tp_cases" onclick="javascript:viewTpCases()">Cases TP</button>
+                <div id="lsk_activities0" style="display: ">
+                    <h2>Activities violating the Control Flow</h2>
+                    <h5>(detail based on the Log Skeleton)</h5>
+                    <div id="lsk_activities"></div>
+                </div>
+                <div id="lsk_cases0" style="display: none">
+                    <h2>Cases violating the Control Flow</h2>
+                    <h5>(detail based on the Log Skeleton)</h5>
+                    <div id="lsk_cases"></div>
+                </div>
+                <div id="tp_activities0" style="display: none">
+                    <h2>Activities violating the Time Perspective</h2>
+                    <h5>(detail based on the Temporal Profile)</h5>
+                    <div id="tp_activities"></div>
+                </div>
+                <div id="tp_cases0" style="display: none">
+                    <h2>Cases violating the Time Perspective</h2>
+                    <h5>(detail based on the Temporal Profile)</h5>
+                    <div id="tp_cases"></div>
+                </div>
+            </div>
         </div>
         <script type="text/javascript">
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             var uuid = urlParams.get('uuid');
+            var returnedData = null;
 
             function switchToConformanceView() {
                 document.getElementById("process_view").style.display = "none";
@@ -59,9 +85,16 @@
                 let port = hostnamePort["port"];
                 let url = "http://"+hostname+":"+port+"/processService";
                 $.get(url, function(data) {
-                    let svgXml = Viz(reprModel(data["model"]), { format: "svg"});
-                    document.getElementById("svg_view").innerHTML = svgXml;
+                    returnedData = data;
+                    console.log(returnedData);
+                    fillDeviations();
+                    representProcessModel();
                 });
+            }
+
+            function representProcessModel() {
+                let svgXml = Viz(reprModel(returnedData["model"]), { format: "svg"});
+                document.getElementById("svg_view").innerHTML = svgXml;
             }
 
             function applyChanges() {
@@ -71,7 +104,82 @@
                 let noise_threshold = document.getElementById("lsk_slider").value / 100.0;
                 let business_hours = document.getElementById("bh_enabled").checked;
                 let dictio = {};
+            }
 
+            function hideEverything() {
+                document.getElementById("lsk_activities0").style.display = "none";
+                document.getElementById("lsk_cases0").style.display = "none";
+                document.getElementById("tp_activities0").style.display = "none";
+                document.getElementById("tp_cases0").style.display = "none";
+            }
+
+            function viewLskActivities() {
+                hideEverything();
+                document.getElementById("lsk_activities0").style.display = "";
+            }
+
+            function viewLskCases() {
+                hideEverything();
+                document.getElementById("lsk_cases0").style.display = "";
+            }
+
+            function viewTpActivities() {
+                hideEverything();
+                document.getElementById("tp_activities0").style.display = "";
+            }
+
+            function viewTpCases() {
+                hideEverything();
+                document.getElementById("tp_cases0").style.display = "";
+            }
+
+            function fillDeviations() {
+                fillDivWithDeviations(returnedData["activity_lsk_conf"], "lsk_activities", returnedData["case_ids"]);
+                fillDivWithDeviations(returnedData["lsk_conf_cases"], "lsk_cases", returnedData["case_ids"]);
+                fillDivWithDeviations(returnedData["activity_ts_conf"], "tp_activities", returnedData["case_ids"]);
+                fillDivWithDeviations(returnedData["ts_conf_cases"], "tp_cases", returnedData["case_ids"]);
+            }
+
+            function fillDivWithDeviations(deviations, target_div, case_ids) {
+                let count = 0;
+                for (let dev in deviations) {
+                    let key = null;
+                    let value = null;
+                    if (Number.isInteger(dev)) {
+                        key = case_ids[count];
+                        value = deviations[dev];
+                    }
+                    else {
+                        key = dev;
+                        value = deviations[dev];
+                    }
+                    if (value.length > 0) {
+                        let span1 = document.createElement("div");
+                        let span2 = document.createElement("ul");
+                        span1.setAttribute("id", target_div+"_S1_"+count);
+                        span2.setAttribute("id", target_div+"_S2_"+count);
+                        span2.style.display = "none";
+                        document.getElementById(target_div).appendChild(span1);
+                        document.getElementById(target_div).appendChild(span2);
+                        span1.innerHTML = "<a href=\"javascript:changeVisibility('"+target_div+"_S2_"+count+"')\">"+key+"</a>";
+                        for (let subdev_idx in value) {
+                            let subdev = value[subdev_idx];
+                            let list_item = document.createElement("li");
+                            list_item.innerHTML = subdev;
+                            span2.appendChild(list_item);
+                        }
+                    }
+                    count++;
+                }
+            }
+
+            function changeVisibility(element_id) {
+                if (document.getElementById(element_id).style.display == "none") {
+                    document.getElementById(element_id).style.display = "";
+                }
+                else {
+                    document.getElementById(element_id).style.display = "none";
+                }
             }
 
             getProcess();
