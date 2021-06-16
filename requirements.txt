@@ -1,4 +1,4 @@
-pm4py
+pm4py>=2.2.8
 Flask
 flask-cors
 frozendict
