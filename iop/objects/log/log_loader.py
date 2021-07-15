@@ -7,7 +7,7 @@ from pm4py.objects.log.util import interval_lifecycle
 from pm4py.objects.log.importer.xes import importer as xes_importer
 
 
-def apply(log_path, max_traces=100):
+def apply(log_path, max_traces=100000000000000):
     parameters = copy(default_parameters)
     log = xes_importer.apply(log_path, parameters={"show_progress_bar": False, "max_traces": max_traces})
     try:
