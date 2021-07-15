@@ -93,6 +93,7 @@ def __get_process(uuid, extra_parameters=None):
     ret["activity_ts_conf"] = model.get_activity_ts_conf()
     ret["cases_ur"] = model.get_cases_ur()
     ret["resource_ur"] = model.get_resource_ur()
+    ret["decision_tree"] = model.get_decision_tree().decode('utf-8')
     return jsonify(ret)
 
 

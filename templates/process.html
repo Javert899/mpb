@@ -40,6 +40,7 @@
                 <button id="view_tp_cases" onclick="javascript:viewTpCases()">Cases TP</button>
                 <button id="view_tp_activities" onclick="javascript:viewUrResources()">UR resources</button>
                 <button id="view_tp_cases" onclick="javascript:viewUrCases()">UR cases</button>
+                <button id="view_decision_tree" onclick="javascript:viewDecisionTree()">Decision Tree</button>
                 <div id="lsk_activities0" style="display: ">
                     <h2>Activities violating the Control Flow</h2>
                     <h5>(detail based on the Log Skeleton)</h5>
@@ -68,6 +69,11 @@
                     <h2>Underperforming resources (cases)</h2>
                     <div id="ur_cases"></div>
                 </div>
+                <div id="decisiontree0" style="display: none">
+				    <h2>Decision Tree</h2>
+                    <h5>(conditions leading to higher duration)</h5>
+					<div id="decisiontree"></div>
+				</div>
             </div>
         </div>
         <script type="text/javascript">
@@ -166,6 +172,7 @@
                 document.getElementById("tp_cases0").style.display = "none";
                 document.getElementById("ur_resources0").style.display = "none";
                 document.getElementById("ur_cases0").style.display = "none";
+                document.getElementById("decisiontree0").style.display = "none";
             }
 
             function viewLskActivities() {
@@ -197,6 +204,11 @@
 				hideEverything();
 				document.getElementById("ur_cases0").style.display = "";
 			}
+			
+			function viewDecisionTree() {
+				hideEverything();
+				document.getElementById("decisiontree0").style.display = "";
+			}
 
             function fillDeviations() {
                 fillDivWithDeviations(returnedData["activity_lsk_conf"], "lsk_activities", returnedData["case_ids"]);
@@ -205,6 +217,7 @@
                 fillDivWithDeviations(returnedData["ts_conf_cases"], "tp_cases", returnedData["case_ids"]);
                 fillDivWithDeviations(returnedData["resource_ur"], "ur_resources", returnedData["case_ids"]);
                 fillDivWithDeviations(returnedData["cases_ur"], "ur_cases", returnedData["case_ids"]);
+				document.getElementById("decisiontree").innerHTML = returnedData["decision_tree"];
             }
 
             function fillDivWithDeviations(deviations, target_div, case_ids) {

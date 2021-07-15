@@ -2,6 +2,7 @@ from iop.algo.discovery import activity_frequency_cases, frequency_performance_d
 from iop.algo.conformance import log_skeleton, temporal_profile, underperforming_resources
 import json
 import frozendict
+from iop.algo.decision import mining
 
 models_dictio = {}
 
@@ -28,6 +29,9 @@ class Model(object):
         self.ts, self.ts_conf = temporal_profile.apply(self.log, parameters=self.parameters)
         print("7")
         self.ur = underperforming_resources.apply(self.log, parameters=self.parameters)
+        print("8")
+        self.decision_tree = mining.apply(self.log, parameters=self.parameters)
+        print("9")
 
 
     def get_lsk_conf_cases(self):
@@ -52,6 +56,9 @@ class Model(object):
 
     def get_case_ids(self):
         return self.case_ids
+
+    def get_decision_tree(self):
+        return self.decision_tree
 
     def get_model(self):
         ret = {"activity_frequency_cases": self.activity_frequency_cases,
