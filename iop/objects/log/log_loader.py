@@ -4,11 +4,12 @@ import pm4py
 from pm4py.statistics.attributes.log import get as attributes_get
 from pm4py.util import constants, xes_constants
 from pm4py.objects.log.util import interval_lifecycle
+from pm4py.objects.log.importer.xes import importer as xes_importer
 
 
-def apply(log_path):
+def apply(log_path, max_traces=100):
     parameters = copy(default_parameters)
-    log = pm4py.read_xes(log_path)
+    log = xes_importer.apply(log_path, parameters={"show_progress_bar": False, "max_traces": max_traces})
     try:
         transitions = attributes_get.get_attribute_values(log, constants.PARAMETER_CONSTANT_TRANSITION_KEY)
         if len(transitions) > 2:
