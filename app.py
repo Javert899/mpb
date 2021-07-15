@@ -91,6 +91,7 @@ def __get_process(uuid, extra_parameters=None):
     ret["ts_conf_cases"] = model.get_ts_conf_cases()
     ret["activity_lsk_conf"] = model.get_activity_lsk_conf()
     ret["activity_ts_conf"] = model.get_activity_ts_conf()
+    ret["cases_ur"] = model.get_cases_ur()
     ret["resource_ur"] = model.get_resource_ur()
     return jsonify(ret)
 

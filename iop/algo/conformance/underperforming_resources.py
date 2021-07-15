@@ -73,6 +73,21 @@ def annotation_deviations(perf_act_res, parameters=None):
     return perf_act_res
 
 
+def case_deviations(perf_act_res, parameters=None):
+    if parameters is None:
+        parameters = {}
+
+    ret = {}
+    for act in perf_act_res:
+        for el in perf_act_res[act]:
+            res = el[2]
+            if res not in ret:
+                ret[res] = []
+            ret[res].append(el)
+
+    return ret
+
+
 def all_resource_deviations(perf_act_res, parameters=None):
     if parameters is None:
         parameters = {}

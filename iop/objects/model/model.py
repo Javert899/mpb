@@ -44,6 +44,9 @@ class Model(object):
         dev = temporal_profile.all_activity_deviations(self.log, self.ts_conf, parameters=self.parameters)
         return dev
 
+    def get_cases_ur(self):
+        return underperforming_resources.case_deviations(self.ur, parameters=self.parameters)
+
     def get_resource_ur(self):
         return underperforming_resources.all_resource_deviations(self.ur, parameters=self.parameters)
 

@@ -38,6 +38,8 @@
                 <button id="view_lsk_cases" onclick="javascript:viewLskCases()">Cases LSK</button>
                 <button id="view_tp_activities" onclick="javascript:viewTpActivities()">Activities TP</button>
                 <button id="view_tp_cases" onclick="javascript:viewTpCases()">Cases TP</button>
+                <button id="view_tp_activities" onclick="javascript:viewUrResources()">UR resources</button>
+                <button id="view_tp_cases" onclick="javascript:viewUrCases()">UR cases</button>
                 <div id="lsk_activities0" style="display: ">
                     <h2>Activities violating the Control Flow</h2>
                     <h5>(detail based on the Log Skeleton)</h5>
@@ -57,6 +59,14 @@
                     <h2>Cases violating the Time Perspective</h2>
                     <h5>(detail based on the Temporal Profile)</h5>
                     <div id="tp_cases"></div>
+                </div>
+                <div id="ur_resources0" style="display: none">
+                    <h2>Underperforming resources (resources with count)</h2>
+                    <div id="ur_resources"></div>
+                </div>
+                <div id="ur_cases0" style="display: none">
+                    <h2>Underperforming resources (cases)</h2>
+                    <div id="ur_cases"></div>
                 </div>
             </div>
         </div>
@@ -154,6 +164,8 @@
                 document.getElementById("lsk_cases0").style.display = "none";
                 document.getElementById("tp_activities0").style.display = "none";
                 document.getElementById("tp_cases0").style.display = "none";
+                document.getElementById("ur_resources0").style.display = "none";
+                document.getElementById("ur_cases0").style.display = "none";
             }
 
             function viewLskActivities() {
@@ -175,20 +187,42 @@
                 hideEverything();
                 document.getElementById("tp_cases0").style.display = "";
             }
+			
+			function viewUrResources() {
+				hideEverything();
+                document.getElementById("ur_resources0").style.display = "";
+			}
+			
+			function viewUrCases() {
+				hideEverything();
+				document.getElementById("ur_cases0").style.display = "";
+			}
 
             function fillDeviations() {
                 fillDivWithDeviations(returnedData["activity_lsk_conf"], "lsk_activities", returnedData["case_ids"]);
                 fillDivWithDeviations(returnedData["lsk_conf_cases"], "lsk_cases", returnedData["case_ids"]);
                 fillDivWithDeviations(returnedData["activity_ts_conf"], "tp_activities", returnedData["case_ids"]);
                 fillDivWithDeviations(returnedData["ts_conf_cases"], "tp_cases", returnedData["case_ids"]);
+                fillDivWithDeviations(returnedData["resource_ur"], "ur_resources", returnedData["case_ids"]);
+                fillDivWithDeviations(returnedData["cases_ur"], "ur_cases", returnedData["case_ids"]);
             }
 
             function fillDivWithDeviations(deviations, target_div, case_ids) {
                 let count = 0;
+				let situation = 2;
+				try {
+					for (let dev of deviations) {
+						situation = 1;
+						break;
+					}
+				}
+				catch (err) {
+					
+				}
                 for (let dev in deviations) {
                     let key = null;
                     let value = null;
-                    if (Number.isInteger(dev)) {
+                    if (situation == 1) {
                         key = case_ids[count];
                         value = deviations[dev];
                     }
