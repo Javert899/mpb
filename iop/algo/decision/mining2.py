@@ -7,18 +7,25 @@ from pm4py.statistics.attributes.log import select
 
 
 class Parameters(Enum):
-    TIMESTAMP_KEY = constants.PARAMETER_CONSTANT_TIMESTAMP_KEY
-    START_TIMESTAMP_KEY = constants.PARAMETER_CONSTANT_START_TIMESTAMP_KEY
     ACTIVITY_KEY = constants.PARAMETER_CONSTANT_ACTIVITY_KEY
 
 
-def apply(log, parameters=None):
+def apply(log, dev_cases, parameters=None):
     if parameters is None:
         parameters = {}
 
-    start_timestamp_key = exec_utils.get_param_value(Parameters.START_TIMESTAMP_KEY, parameters, xes_constants.DEFAULT_START_TIMESTAMP_KEY)
-    timestamp_key = exec_utils.get_param_value(Parameters.TIMESTAMP_KEY, parameters, xes_constants.DEFAULT_TIMESTAMP_KEY)
+    dev_cases = set(dev_cases)
+
     activity_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY, parameters, xes_constants.DEFAULT_NAME_KEY)
+
+    classes = ["Normal", "Deviating"]
+    target = []
+
+    for i in range(len(log)):
+        if i in dev_cases:
+            target.append(1)
+        else:
+            target.append(0)
 
     try:
         str_tr_attr, str_ev_attr, num_tr_attr, num_ev_attr = select.select_attributes_from_log_for_tree(log)
@@ -28,15 +35,7 @@ def apply(log, parameters=None):
         str_ev_attr = list(str_ev_attr)
         new_params = {"str_evsucc_attr": str_evsucc_attr, "str_ev_attr": str_ev_attr, "str_tr_attr": str_tr_attr}
 
-        print(new_params)
         feature, names = log_to_features.apply(log, parameters=new_params)
-        case_durations = []
-        for trace in log:
-            case_durations.append(trace[-1][timestamp_key].timestamp() - trace[0][start_timestamp_key].timestamp())
-        sorted_case_durations = sorted(case_durations)
-        fq = sorted_case_durations[int(0.75 * len(sorted_case_durations))]
-        classes = ["Under", "Above"]
-        target = [0 if case_durations[i] <= fq else 1 for i in range(len(case_durations))]
         clf = tree.DecisionTreeClassifier(max_depth=5)
         clf = clf.fit(feature, target)
         gviz = decision_tree_visualizer.apply(clf, names, classes, parameters={"format": "svg"})

@@ -49,6 +49,8 @@
                 <div id="lsk_cases0" style="display: none">
                     <h2>Cases violating the Control Flow</h2>
                     <h5>(detail based on the Log Skeleton)</h5>
+					<span style="display: none" id="lsk_cases_list"></span>
+					<button onclick="javascript:showDifferenceDeviations('lsk_cases_list')">Analyze Deviations with Decision Tree</button>
                     <div id="lsk_cases"></div>
                 </div>
                 <div id="tp_activities0" style="display: none">
@@ -59,6 +61,8 @@
                 <div id="tp_cases0" style="display: none">
                     <h2>Cases violating the Time Perspective</h2>
                     <h5>(detail based on the Temporal Profile)</h5>
+					<span style="display: none" id="tp_cases_list"></span>
+					<button onclick="javascript:showDifferenceDeviations('tp_cases_list')">Analyze Deviations with Decision Tree</button>
                     <div id="tp_cases"></div>
                 </div>
                 <div id="ur_resources0" style="display: none">
@@ -67,6 +71,8 @@
                 </div>
                 <div id="ur_cases0" style="display: none">
                     <h2>Underperforming resources (cases)</h2>
+					<span style="display: none" id="ur_cases_list"></span>
+					<button onclick="javascript:showDifferenceDeviations('ur_cases_list')">Analyze Deviations with Decision Tree</button>
                     <div id="ur_cases"></div>
                 </div>
                 <div id="decisiontree0" style="display: none">
@@ -130,6 +136,32 @@
                     representProcessModel();
                 });
             }
+			
+			function showDifferenceDeviations(cases_container) {
+				let cases = document.getElementById(cases_container).innerHTML.split(",");
+				let i = 0;
+				while (i < cases.length) {
+					cases[i] = parseInt(cases[i]);
+					i++;
+				}
+				let hostnamePort = getHostname();
+                let hostname = hostnamePort["hostname"];
+                let port = hostnamePort["port"];
+                let url = "http://"+hostname+":"+port+"/decisionTreeService";
+				let decodedParameters2 = {};
+				if (decodedParameters != null) {
+					Object.assign(decodedParameters2, decodedParameters);
+				}
+				decodedParameters2["deviating_cases"] = cases;
+				let encodedParameters2 = JSON.stringify(decodedParameters2);
+				let encodedParameters3 = btoa(encodedParameters2);
+                url += "?uuid="+uuid;
+                if (encodedParameters2 != null && typeof(encodedParameters2) != "undefined") {
+                    url += "&parameters="+encodedParameters3;
+                }
+				console.log(url);
+				window.open(url);
+			}
 
             function representProcessModel() {
                 let svgXml = Viz(reprModel(returnedData["model"]), { format: "svg"});
@@ -217,6 +249,41 @@
                 fillDivWithDeviations(returnedData["ts_conf_cases"], "tp_cases", returnedData["case_ids"]);
                 fillDivWithDeviations(returnedData["resource_ur"], "ur_resources", returnedData["case_ids"]);
                 fillDivWithDeviations(returnedData["cases_ur"], "ur_cases", returnedData["case_ids"]);
+				
+				let lsk_cases_list = [];
+				let tp_cases_list = [];
+				let ur_cases_list = [];
+				
+				let lsk_conf_keys = Object.keys(returnedData["lsk_conf_cases"]);
+				let tp_conf_keys = Object.keys(returnedData["ts_conf_cases"]);
+				let cases_ur_keys = Object.keys(returnedData["cases_ur"]);
+				
+				let i = 0;
+				while (i < lsk_conf_keys.length) {
+					if (returnedData["lsk_conf_cases"][lsk_conf_keys[i]].length > 0) {
+						lsk_cases_list.push(lsk_conf_keys[i]);
+					}
+					i++;
+				}
+				i = 0;
+				while (i < tp_conf_keys.length) {
+					if (returnedData["ts_conf_cases"][tp_conf_keys[i]].length > 0) {
+						tp_cases_list.push(tp_conf_keys[i]);
+					}
+					i++;
+				}
+				i = 0;
+				while (i < cases_ur_keys.length) {
+					if (returnedData["cases_ur"][cases_ur_keys[i]].length > 0) {
+						ur_cases_list.push(cases_ur_keys[i]);
+					}
+					i++;
+				}
+				
+				document.getElementById("lsk_cases_list").innerHTML = lsk_cases_list;
+				document.getElementById("tp_cases_list").innerHTML = tp_cases_list;
+				document.getElementById("ur_cases_list").innerHTML = ur_cases_list;
+				
 				document.getElementById("decisiontree").innerHTML = returnedData["decision_tree"];
             }
 

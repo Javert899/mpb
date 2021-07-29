@@ -5,6 +5,7 @@ import uuid
 from iop.objects.log import df_loader, log_loader
 from copy import copy
 from iop.objects.model import model as model_factory
+from iop.algo.decision import mining2
 from flask_cors import CORS
 import json
 import traceback
@@ -63,6 +64,26 @@ def process():
         extra_parameters = {}
     #uuid_example_log = __load_log("inputs/interval_event_log.xes", "inputs/interval_event_log.xes")
     return __get_process(uuid, extra_parameters)
+
+
+@app.route("/decisionTreeService")
+def decisionTreeService():
+    uuid = request.args.get("uuid")
+    parameters_url = request.args.get("parameters")
+    try:
+        parameters = base64.b64decode(parameters_url)
+        extra_parameters = json.loads(parameters)
+    except:
+        traceback.print_exc()
+        extra_parameters = {}
+
+    log, parameters = logs_dictio[uuid]
+    parameters = copy(parameters)
+    for param in extra_parameters:
+        parameters[param] = extra_parameters[param]
+    deviating_cases = parameters["deviating_cases"]
+
+    return mining2.apply(log, deviating_cases, parameters=parameters)
 
 
 def __load_log(orig_name, path):
