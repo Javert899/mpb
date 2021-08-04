@@ -4,7 +4,8 @@ from pm4py.visualization.decisiontree import visualizer as decision_tree_visuali
 from enum import Enum
 from pm4py.util import exec_utils, constants, xes_constants
 from pm4py.statistics.attributes.log import select
-
+import traceback
+import numpy as np
 
 class Parameters(Enum):
     TIMESTAMP_KEY = constants.PARAMETER_CONSTANT_TIMESTAMP_KEY
@@ -26,10 +27,17 @@ def apply(log, parameters=None):
         str_ev_attr = set(str_ev_attr)
         str_ev_attr.add(activity_key)
         str_ev_attr = list(str_ev_attr)
-        new_params = {"str_evsucc_attr": str_evsucc_attr, "str_ev_attr": str_ev_attr, "str_tr_attr": str_tr_attr}
+        new_params = {"str_evsucc_attr": str_evsucc_attr, "str_ev_attr": str_ev_attr, "str_tr_attr": str_tr_attr, "num_tr_attr": num_tr_attr, "num_ev_attr": num_ev_attr}
 
         print(new_params)
         feature, names = log_to_features.apply(log, parameters=new_params)
+        for i in range(len(feature)):
+            for j in range(len(feature[i])):
+                try:
+                    if np.isnan(feature[i][j]):
+                        feature[i][j] = 0
+                except:
+                    feature[i][j] = 0
         case_durations = []
         for trace in log:
             case_durations.append(trace[-1][timestamp_key].timestamp() - trace[0][start_timestamp_key].timestamp())
@@ -42,4 +50,5 @@ def apply(log, parameters=None):
         gviz = decision_tree_visualizer.apply(clf, names, classes, parameters={"format": "svg"})
         return decision_tree_visualizer.serialize(gviz)
     except:
+        traceback.print_exc()
         return "".encode("utf-8")
